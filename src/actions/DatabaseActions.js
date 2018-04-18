@@ -45,8 +45,6 @@ export const createNote = ({note}) => {
             dispatch({
                 type: NOTE_CREATED
             });
-        })
-        .then(() => {
             closeDatabase(realmDB);
         });
     };
@@ -65,8 +63,6 @@ export const fetchNotes = () => {
                 type: NOTES_FETCH,
                 payload: notes
             });
-        })
-        .then(() => {
             closeDatabase(realmDB);
         });
     }

@@ -5,7 +5,11 @@ class NoteMainScreen extends Component {
 
     render() {
         return(
-            
+            <View>
+                <Text>
+                    Welcome to Sticky Notes!
+                </Text>
+            </View>
         );
     }
 }
