@@ -1,4 +1,5 @@
 import { NOTE_CREATED, NOTES_FETCH } from './types';
+import { Actions } from 'react-redux';
 const Realm = require('realm');
 
 let SCHEMA_LIST = {
@@ -13,7 +14,7 @@ const NoteSchema = {
 }
 
 const openDatabase = () => {
-    new Promise(function(resolve, reject) {
+    return new Promise(function(resolve, reject) {
         Realm.open({ schema: [NoteSchema]})
         .then(realm => {
             resolve(realm);
@@ -31,12 +32,13 @@ const closeDatabase = () => {
 
 export const createNote = ({note}) => {
     return (dispatch) => {
-        let realmDB = null;
+        let realmDB;
         openDatabase()
         .then((realm) => {
-            realmDB =realm;
+            this.realmDB =realm;
+            console.log(this.realmDB);
             return realm.write(() => {
-                const noteRecord = realmDB.create(SCHEMA_LIST.Note,{
+                const noteRecord = realm.create(SCHEMA_LIST.Note,{
                     note
                 });
             });
@@ -45,23 +47,23 @@ export const createNote = ({note}) => {
             dispatch({
                 type: NOTE_CREATED
             });
-            closeDatabase(realmDB);
+            closeDatabase(realmDB);    
         });
     };
 };
 
 export const fetchNotes = () => {
     return (dispatch) => {
-        let realmDB = null;
+        let realmDB;
         openDatabase()
         .then((realm) => {
-            realmDB = realm;
+            this.realmDB = realm;
             return realm.objects(SCHEMA_LIST.Note);
         })
         .then((notes) => {
             dispatch({
                 type: NOTES_FETCH,
-                payload: notes
+                payload: Array.from(notes)
             });
             closeDatabase(realmDB);
         });

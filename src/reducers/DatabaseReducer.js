@@ -6,7 +6,7 @@ const INITIAL_STATE = {
 export default (state = INITIAL_STATE, action) => {
     console.log(action);
 
-    switch(action.payload) {
+    switch(action.type) {
         case NOTE_CREATED:
             return {...state};
         case NOTES_FETCH:
