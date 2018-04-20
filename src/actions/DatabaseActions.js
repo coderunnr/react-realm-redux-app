@@ -1,8 +1,8 @@
 import { NOTE_CREATED, NOTES_FETCH } from './types';
-import { Actions } from 'react-redux';
+import { Actions } from 'react-native-router-flux'; 
 const Realm = require('realm');
 
-let SCHEMA_LIST = {
+SCHEMA_LIST = {
     Note: 'Note'
 };
 
@@ -26,18 +26,13 @@ const openDatabase = () => {
     
 };
 
-const closeDatabase = () => {
-    realmDB.close();
-}
-
 export const createNote = ({note}) => {
     return (dispatch) => {
-        let realmDB;
         openDatabase()
         .then((realm) => {
-            this.realmDB =realm;
+            this.realmDB = realm;
             console.log(this.realmDB);
-            return realm.write(() => {
+            realm.write(() => {
                 const noteRecord = realm.create(SCHEMA_LIST.Note,{
                     note
                 });
@@ -47,14 +42,13 @@ export const createNote = ({note}) => {
             dispatch({
                 type: NOTE_CREATED
             });
-            closeDatabase(realmDB);    
+            Actions.reset('noteMain');
         });
     };
 };
 
 export const fetchNotes = () => {
     return (dispatch) => {
-        let realmDB;
         openDatabase()
         .then((realm) => {
             this.realmDB = realm;
@@ -65,7 +59,6 @@ export const fetchNotes = () => {
                 type: NOTES_FETCH,
                 payload: Array.from(notes)
             });
-            closeDatabase(realmDB);
         });
     }
 };

@@ -1,11 +1,36 @@
 import React, { Component } from 'react';
-import { ListView } from 'react-native';
+import { ListView, AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { fetchNotes } from '../actions';
 import { Text } from 'react-native';
 import { Card, CardSection, Input, Button } from './common';
 
 class NoteList extends Component {
+
+    // state = {
+    //     appState: AppState.currentState,
+    //     init: 'ok'
+    // }
+    
+    // componentDidMount() {
+    //     AppState.addEventListener('change', this._handleAppStateChange);
+    // }
+
+    // componentWillUnmount() {
+    //     AppState.removeEventListener('change', this._handleAppStateChange);
+    // }
+
+    // _handleAppStateChange = (nextAppState) => {
+    //     // if (this.state.appState == 'background' | 'inactive' && nextAppState == 'active') {  //.match(/inactive|background/)
+    //     //     this.setState({init: 'inside it'});
+    //     //     this.props.fetchNotes();
+    //     // }
+    //     // this.setState({appState: nextAppState, init: nextAppState});
+
+    //     if(nextAppState === 'background' || nextAppState === 'inactive') {
+    //         this.setState({ init: nextAppState});
+    //     }
+    // }
 
     componentWillMount() {
         this.props.fetchNotes();
@@ -40,7 +65,7 @@ class NoteList extends Component {
             <ListView
                 enableEmptySections
                 dataSource={this.dataSource}
-                renderRow={this.renderRow}
+                renderRow={this.renderRow.bind(this)}
             />
         );
     }

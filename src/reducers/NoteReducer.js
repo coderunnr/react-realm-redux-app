@@ -1,4 +1,4 @@
-import { NOTE_CHANGED } from '../actions/types';
+import { NOTE_CHANGED, NOTE_CREATED } from '../actions/types';
 const INITIAL_STATE = {
     note: ''
 };
@@ -9,6 +9,8 @@ export default (state = INITIAL_STATE, action) => {
     switch(action.type) {
         case NOTE_CHANGED:
             return {...state, note: action.payload};
+        case NOTE_CREATED:
+            return {...state};    
         default:
             return state;
     }
