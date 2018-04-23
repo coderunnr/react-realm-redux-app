@@ -1,4 +1,4 @@
-import { NOTE_CREATED, NOTES_FETCH, RECORD_CREATED } from './types';
+import { NOTE_CREATED, NOTES_FETCH, RECORD_CREATED, RECORD_READ, RECORD_UPDATED, RECORD_DELETED } from './types';
 import { Actions } from 'react-native-router-flux'; 
 const Realm = require('realm');
 
@@ -61,31 +61,115 @@ export const fetchNotes = () => {
 };
 
 /**
- * Create a Record in Database
+ * Manipulates the database (Create or Update)
+ * @param {*} schema 
+ * @param {*} params 
+ * @param {*} isUpdate 
  */
-export const create = (schema, params, OnSuccess) => {
-    return (dispatch) => {
+export const manipulate = (schema, params, isUpdate) => {
+    return new Promise( (resolve, reject) => {
         openDatabase()
-        .then( realm => {
+        .then(realm => {
             return realm.write(() => {
                 realm.create(schema, {
                     params
-                });
+                }, isUpdate);
             });
         })
+        .then(record => {
+            resolve(record);
+        })
+        .catch((error) => {
+            reject(error);
+        });
+    });
+};
+
+/**
+ * Create a new record in the schema
+ * @param {*} schema 
+ * @param {*} params 
+ */
+export const create = (schema, params) => {
+
+    return new Promise((resolve, reject) => {
+        manipulate(schema, params, false)
         .then((record) => {
             dispatch({
                 type: RECORD_CREATED,
                 payload: record
             });
-            if (OnSuccess) {
-                OnSuccess();
-            }
+            resolve(record);
         })
         .catch((error) => {
-            throw new Error(error);
+            reject(error);
         });
-    }
+    });
 };
 
-export const read = (schema)
+/**
+ * Perform a read of a record with filters
+ * @param {*} schema 
+ * @param {*} filters 
+ */
+export const read = (schema, filters) => {
+
+    return new Promise((resolve, reject) => {
+        openDatabase()
+        .then(realm => {
+            return realm.objects(schema).filtered(filters);
+        })
+        .then(record => {
+            dispatch({
+                type: RECORD_READ,
+                payload: record
+            });
+            resolve(record);
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+};
+
+/**
+ * Update the record in the database
+ * @param {*} schema 
+ * @param {*} params 
+ */
+export const update = (schema, params) => {
+
+    return new Promise((resolve, reject) => {
+        manipulate(schema, params, true)
+        .then(record => {
+            dispatch({
+                type: RECORD_UPDATED,
+                payload: record
+            });
+            resolve(record);
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+};
+
+export const remove = (schema, filters) => {
+
+    return new Promise((resolve, reject) => {
+        openDatabase()
+        .then(realm => {
+            return delete(realm.objects(schema).filtered(filters));
+        })
+        .then(() => {
+            dispatch({
+                type: RECORD_DELETED,
+            });
+            resolve();
+        })
+        .catch(error => {
+            reject(error);
+        });
+    });
+}
+
