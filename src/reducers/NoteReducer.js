@@ -10,7 +10,7 @@ export default (state = INITIAL_STATE, action) => {
         case NOTE_CHANGED:
             return {...state, note: action.payload};
         case NOTE_CREATED:
-            return {...state};    
+            return {...INITIAL_STATE};
         default:
             return state;
     }
