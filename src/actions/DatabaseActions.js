@@ -2,7 +2,7 @@
  * @Author: Kanishk 
  * @Date: 2018-04-24 11:55:04 
  * @Last Modified by: Kanishk
- * @Last Modified time: 2018-04-24 12:55:54
+ * @Last Modified time: 2018-04-24 13:04:55
  */
 
 import { NOTE_CREATED, NOTES_FETCH } from './types';
@@ -27,7 +27,7 @@ export const fetchNotes = () => {
     return (dispatch) => {
         console.log(SCHEMA_LIST.Note);
         
-        read(SCHEMA_LIST.Note, '')
+        read(SCHEMA_LIST.Note)
         .then((notes) => {
             dispatch({
                 type: NOTES_FETCH,

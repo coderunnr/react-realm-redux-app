@@ -2,7 +2,7 @@
  * @Author: Kanishk 
  * @Date: 2018-04-24 11:54:43 
  * @Last Modified by: Kanishk
- * @Last Modified time: 2018-04-24 12:52:06
+ * @Last Modified time: 2018-04-24 13:07:25
  */
 
 const Realm = require('realm');
@@ -69,11 +69,15 @@ export const create = (schema, params) => {
  * @param {*} filters 
  */
 export const read = (schema, filters) => {
-    console.log(schema, filters);
     return new Promise((resolve, reject) => {
         openDatabase()
         .then(realm => {
-            return realm.objects(schema.name);//.filtered(filters);
+            if(!filters) {
+                return realm.objects(schema.name);
+            } else {
+                return realm.objects(schema.name).filtered(filters);
+            }
+            
         })
         .then(record => {
             resolve(record);
