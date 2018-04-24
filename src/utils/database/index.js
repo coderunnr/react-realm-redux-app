@@ -2,16 +2,17 @@
  * @Author: Kanishk 
  * @Date: 2018-04-24 11:54:43 
  * @Last Modified by: Kanishk
- * @Last Modified time: 2018-04-24 11:55:32
+ * @Last Modified time: 2018-04-24 12:52:06
  */
 
 const Realm = require('realm');
-import { getSchemaList } from '../utils/schema';
+import { getSchemaList, SCHEMA_LIST } from './schema';
 
 
 const openDatabase = () => {
     return new Promise(function(resolve, reject) {
-        Realm.open({ schema: [getSchemaList()]})
+        console.log(getSchemaList());
+        Realm.open({ schema: [SCHEMA_LIST.Note] })
         .then(realm => {
             resolve(realm);
         })
@@ -32,9 +33,7 @@ export const manipulate = (schema, params, isUpdate) => {
         openDatabase()
         .then(realm => {
             return realm.write(() => {
-                realm.create(schema, {
-                    params
-                }, isUpdate);
+                realm.create(schema.name, params, isUpdate);
             });
         })
         .then(record => {
@@ -70,11 +69,11 @@ export const create = (schema, params) => {
  * @param {*} filters 
  */
 export const read = (schema, filters) => {
-
+    console.log(schema, filters);
     return new Promise((resolve, reject) => {
         openDatabase()
         .then(realm => {
-            return realm.objects(schema).filtered(filters);
+            return realm.objects(schema.name);//.filtered(filters);
         })
         .then(record => {
             resolve(record);
@@ -108,7 +107,7 @@ export const remove = (schema, filters) => {
     return new Promise((resolve, reject) => {
         openDatabase()
         .then(realm => {
-            return delete(realm.objects(schema).filtered(filters));
+            return delete(realm.objects(schema.name).filtered(filters));
         })
         .then(() => {
             resolve();
